@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id        String    @id @default(uuid())
+  name      String
+  nif       String    @unique
+  email     String    
+  phone     String    
+  services  OrganizationService[]
+  users     User[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+
+model Service {
+  id        String    @id @default(uuid())
+  name      String
+  description String
+  image    String
+  is_private   Boolean   @default(true)
+  active    Boolean   @default(true)
+  organizations  OrganizationService[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model OrganizationService {
+  organization Organization @relation(fields: [organization_id], references: [id])
+  organization_id String
+  service Service @relation(fields: [service_id], references: [id])
+  service_id String
+  active Boolean @default(true)
+  db_name String
+  db_user String
+  db_password String
+  sl_url String
+  sl_session_id String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@id([organization_id, service_id])
+}
+
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  name      String?   
+  password  String
+  is_admin  Boolean   @default(false)
+  organization_id String
+  organization Organization @relation(fields: [organization_id], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
