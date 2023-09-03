@@ -13,11 +13,11 @@ datasource db {
 model Organization {
   id        String    @id @default(uuid())
   name      String
-  nif       String    @unique
+  // nif       String    @unique
   email     String    
-  phone     String    
+  phone     String
   services  OrganizationService[]
-  users     User[]
+  users  UserOrganizationRole[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
@@ -59,9 +59,41 @@ model User {
   name      String?   
   password  String
   is_admin  Boolean   @default(false)
-  organization_id String
-  organization Organization @relation(fields: [organization_id], references: [id])
+  organizations  UserOrganizationRole[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
 
+model UserOrganizationRole {
+  user User @relation(fields: [user_id], references: [id])
+  user_id String
+  organization Organization @relation(fields: [organization_id], references: [id])
+  organization_id String
+  role Role @relation(fields: [role_id], references: [id])
+  role_id String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@id([user_id, organization_id, role_id])
+}
+
+
+
+model Role{
+  id        String    @id @default(uuid())
+  name      String    @unique
+  permissions Permission[]
+  users UserOrganizationRole[]
+  description String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Permission{
+  id        String    @id @default(uuid())
+  name      String    @unique
+  roles Role[]
+  description String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
