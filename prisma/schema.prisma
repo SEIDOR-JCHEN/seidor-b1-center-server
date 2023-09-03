@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Organization {
-  id        String    @id @default(uuid())
+  id        BigInt   @id @default(autoincrement())
   name      String
   // nif       String    @unique
   email     String    
@@ -20,41 +20,55 @@ model Organization {
   users  UserOrganizationRole[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  users UserOrgRoles[]
+  apps  OrganizationApps[]
+  invites InviteUser[]
 }
 
 
-model Service {
-  id        String    @id @default(uuid())
+model App {
+  id        BigInt   @id @default(autoincrement())
   name      String
   description String
   image    String
-  is_private   Boolean   @default(true)
+  internal  Boolean   @default(true)
   active    Boolean   @default(true)
-  organizations  OrganizationService[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  orgs  OrganizationApps[]
 }
 
-model OrganizationService {
-  organization Organization @relation(fields: [organization_id], references: [id])
-  organization_id String
-  service Service @relation(fields: [service_id], references: [id])
-  service_id String
+model OrganizationApps {
+  orgId BigInt
+  appId BigInt
   active Boolean @default(true)
-  db_name String
-  db_user String
-  db_password String
-  sl_url String
-  sl_session_id String
+  dbName String
+  dbUser String
+  dbPassword String
+  slUrl String
+  slSessionId String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  @@id([organization_id, service_id])
+  org Organization @relation(fields: [orgId], references: [id])
+  app App @relation(fields: [appId], references: [id])
+  users UserOrgApps[]
+
+  @@id([orgId, appId])
 }
 
+model Mantainers {
+  id        BigInt   @id @default(autoincrement())
+  name      String
+  email     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
 
 model User {
-  id        String    @id @default(uuid())
+  id        BigInt   @id @default(autoincrement())
   email     String    @unique
   name      String?   
   password  String
@@ -87,6 +101,9 @@ model Role{
   description String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  org Organization @relation(fields: [orgId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
 }
 
 model Permission{

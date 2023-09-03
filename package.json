@@ -6,8 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "destroy:test": "pm2 stop SEIDOR-B1CENTER-SERVER-TEST",
-    "destroy:prod": "pm2 stop SEIDOR-B1CENTER-SERVER-PROD",
+    "destroy:test": "pm2 delete SEIDOR-B1CENTER-SERVER-TEST",
+    "destroy:prod": "pm2 delete SEIDOR-B1CENTER-SERVER-PROD",
+    "stop:test": "pm2 stop SEIDOR-B1CENTER-SERVER-TEST",
+    "stop:prod": "pm2 stop SEIDOR-B1CENTER-SERVER-PROD",
     "deploy:test": "pm2 reload SEIDOR-B1CENTER-SERVER-TEST --update-env || pm2 start server.config.js --only SEIDOR-B1CENTER-SERVER-TEST",
     "deploy:prod": "pm2 reload SEIDOR-B1CENTER-SERVER-PROD --update-env || pm2 start server.config.js --only SEIDOR-B1CENTER-SERVER-PROD",
     "build": "nest build",
