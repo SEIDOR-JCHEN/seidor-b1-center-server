@@ -3,7 +3,7 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "assets": ["config/envs/*"],
+    "assets": ["config/env/*"],
     "deleteOutDir": true,
     "builder": "swc",
     "typeCheck": true

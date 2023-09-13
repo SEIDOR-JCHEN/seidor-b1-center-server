@@ -10,29 +10,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum GlobalRole {
+  ADMIN
+  USER
+}
+
+enum OrgRole {
+  ADMIN
+  USER
+}
+
+
 model Organization {
   id        BigInt   @id @default(autoincrement())
-  name      String
-  // nif       String    @unique
-  email     String    
-  phone     String
-  services  OrganizationService[]
+  name      String   @unique
+  description String
+  apps      OrganizationApps[]
   users  UserOrganizationRole[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  users UserOrgRoles[]
-  apps  OrganizationApps[]
-  invites InviteUser[]
 }
-
 
 model App {
   id        BigInt   @id @default(autoincrement())
   name      String
   description String
   image    String
-  internal  Boolean   @default(true)
+  internal  Boolean   @default(false)
   active    Boolean   @default(true)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -54,63 +59,66 @@ model OrganizationApps {
 
   org Organization @relation(fields: [orgId], references: [id])
   app App @relation(fields: [appId], references: [id])
-  users UserOrgApps[]
 
+  users UserOrganizationApps[]
+  
   @@id([orgId, appId])
 }
 
-model Mantainers {
-  id        BigInt   @id @default(autoincrement())
-  name      String
-  email     String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
 
 model User {
   id        BigInt   @id @default(autoincrement())
   email     String    @unique
   name      String?   
   password  String
-  is_admin  Boolean   @default(false)
+  role GlobalRole @default(USER)
+  verified Boolean @default(false)
   organizations  UserOrganizationRole[]
+  apps UserOrganizationApps[]
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
 
 model UserOrganizationRole {
-  user User @relation(fields: [user_id], references: [id])
-  user_id String
-  organization Organization @relation(fields: [organization_id], references: [id])
-  organization_id String
-  role Role @relation(fields: [role_id], references: [id])
-  role_id String
+  orgId BigInt
+  userId BigInt
+  role OrgRole @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  organization Organization @relation(fields: [orgId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@id([orgId,userId])
+}
+
+model UserOrganizationApps{
+  orgId BigInt
+  userId BigInt
+  appId BigInt
+  active Boolean @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  @@id([user_id, organization_id, role_id])
+  user User @relation(fields: [userId], references: [id])
+  orgApps OrganizationApps @relation(fields: [appId, orgId], references: [appId, orgId])
+
+  @@id([orgId, userId, appId])
+}
+
+model Invitation {
+  id        BigInt   @id @default(autoincrement())
+  orgId     BigInt
+  email     String
+  token     String
+  message   String?
+  apps      String[]
+  accepted  Boolean @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 
 
-model Role{
-  id        String    @id @default(uuid())
-  name      String    @unique
-  permissions Permission[]
-  users UserOrganizationRole[]
-  description String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
 
-  org Organization @relation(fields: [orgId], references: [id])
-  role Role @relation(fields: [roleId], references: [id])
-}
-
-model Permission{
-  id        String    @id @default(uuid())
-  name      String    @unique
-  roles Role[]
-  description String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}

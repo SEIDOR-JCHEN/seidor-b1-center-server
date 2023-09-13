@@ -6,6 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "migrate:dev": "dotenv -e src/config/env/development.env -- npx prisma migrate dev",
+    "migrate:prod": "dotenv -e src/config/env/production.env -- npx prisma migrate deploy",
     "destroy:test": "pm2 delete SEIDOR-B1CENTER-SERVER-TEST",
     "destroy:prod": "pm2 delete SEIDOR-B1CENTER-SERVER-PROD",
     "stop:test": "pm2 stop SEIDOR-B1CENTER-SERVER-TEST",
@@ -28,6 +30,7 @@
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
+    "@prisma/client": "5.0.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "joi": "^17.9.2",
