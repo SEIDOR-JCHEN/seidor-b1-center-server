@@ -22,32 +22,32 @@ enum OrgRole {
 
 
 model Organization {
-  id        BigInt   @id @default(autoincrement())
+  id        Int   @id @default(autoincrement())
   name      String   @unique
   description String
   apps      OrganizationApps[]
   users  UserOrganizationRole[]
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime  @updatedAt @default(now())
 
 }
 
 model App {
-  id        BigInt   @id @default(autoincrement())
+  id        Int   @id @default(autoincrement())
   name      String
   description String
   image    String
   internal  Boolean   @default(false)
   active    Boolean   @default(true)
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime  @updatedAt @default(now())
 
   orgs  OrganizationApps[]
 }
 
 model OrganizationApps {
-  orgId BigInt
-  appId BigInt
+  orgId Int
+  appId Int
   active Boolean @default(true)
   dbName String
   dbUser String
@@ -55,7 +55,7 @@ model OrganizationApps {
   slUrl String
   slSessionId String
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime  @updatedAt @default(now())
 
   org Organization @relation(fields: [orgId], references: [id])
   app App @relation(fields: [appId], references: [id])
@@ -67,25 +67,26 @@ model OrganizationApps {
 
 
 model User {
-  id        BigInt   @id @default(autoincrement())
+  id        Int   @id @default(autoincrement())
   email     String    @unique
   name      String?   
   password  String
+  hashedRt  String?
   role GlobalRole @default(USER)
   verified Boolean @default(false)
   organizations  UserOrganizationRole[]
   apps UserOrganizationApps[]
 
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime  @updatedAt @default(now())
 }
 
 model UserOrganizationRole {
-  orgId BigInt
-  userId BigInt
+  orgId Int
+  userId Int
   role OrgRole @default(USER)
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime  @updatedAt @default(now())
   
   organization Organization @relation(fields: [orgId], references: [id])
   user User @relation(fields: [userId], references: [id])
@@ -94,12 +95,12 @@ model UserOrganizationRole {
 }
 
 model UserOrganizationApps{
-  orgId BigInt
-  userId BigInt
-  appId BigInt
+  orgId Int
+  userId Int
+  appId Int
   active Boolean @default(false)
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime  @updatedAt @default(now())
 
   user User @relation(fields: [userId], references: [id])
   orgApps OrganizationApps @relation(fields: [appId, orgId], references: [appId, orgId])
@@ -108,15 +109,15 @@ model UserOrganizationApps{
 }
 
 model Invitation {
-  id        BigInt   @id @default(autoincrement())
-  orgId     BigInt
+  id        Int   @id @default(autoincrement())
+  orgId     Int
   email     String
   token     String
   message   String?
   apps      String[]
   accepted  Boolean @default(false)
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime  @updatedAt @default(now())
 }
 
 

@@ -6,7 +6,7 @@ CREATE TYPE "OrgRole" AS ENUM ('ADMIN', 'USER');
 
 -- CreateTable
 CREATE TABLE "Organization" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -17,7 +17,7 @@ CREATE TABLE "Organization" (
 
 -- CreateTable
 CREATE TABLE "App" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "image" TEXT NOT NULL,
@@ -31,8 +31,8 @@ CREATE TABLE "App" (
 
 -- CreateTable
 CREATE TABLE "OrganizationApps" (
-    "orgId" BIGINT NOT NULL,
-    "appId" BIGINT NOT NULL,
+    "orgId" INTEGER NOT NULL,
+    "appId" INTEGER NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "dbName" TEXT NOT NULL,
     "dbUser" TEXT NOT NULL,
@@ -47,10 +47,11 @@ CREATE TABLE "OrganizationApps" (
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT,
     "password" TEXT NOT NULL,
+    "hashedRt" TEXT,
     "role" "GlobalRole" NOT NULL DEFAULT 'USER',
     "verified" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -61,8 +62,8 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "UserOrganizationRole" (
-    "orgId" BIGINT NOT NULL,
-    "userId" BIGINT NOT NULL,
+    "orgId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
     "role" "OrgRole" NOT NULL DEFAULT 'USER',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -72,9 +73,9 @@ CREATE TABLE "UserOrganizationRole" (
 
 -- CreateTable
 CREATE TABLE "UserOrganizationApps" (
-    "orgId" BIGINT NOT NULL,
-    "userId" BIGINT NOT NULL,
-    "appId" BIGINT NOT NULL,
+    "orgId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "appId" INTEGER NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -84,8 +85,8 @@ CREATE TABLE "UserOrganizationApps" (
 
 -- CreateTable
 CREATE TABLE "Invitation" (
-    "id" BIGSERIAL NOT NULL,
-    "orgId" BIGINT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "orgId" INTEGER NOT NULL,
     "email" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "message" TEXT,

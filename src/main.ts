@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import fs from 'fs';
 import { AppModule } from './app.module';
@@ -12,6 +13,8 @@ async function bootstrap() {
     httpsOptions,
     logger: ['error', 'warn'],
   });
+
+  app.useGlobalPipes(new ValidationPipe());
 
   const PORT = process.env.PORT || 3000;
 
