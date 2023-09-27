@@ -3,10 +3,15 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 // import { envConfiguration } from './config/configuration';
-import { envSchema } from './config/validation';
-import { getEnvPath } from './helpers/env.helper';
-import { AuthModule } from './modules/auth/auth.module';
-import { PrismaModule } from './modules/prisma/prisma.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AccessTokenGuard } from './common/guards';
+import { getEnvPath } from './config/env.helper';
+import { envSchema } from './config/env.validation';
+import { PrismaModule } from './modules/common/prisma/prisma.module';
+import { AuthModule } from './modules/core/auth/auth.module';
+import { WorkOrdersModule } from './modules/apps/prodassist/work-orders/work-orders.module';
+import { ResourcesModule } from './modules/apps/prodassist/resources/resources.module';
+import { InvoicesModule } from './modules/apps/suppnet/invoices/invoices.module';
 
 const envFilePath: string = getEnvPath(`${__dirname}/config/env/`);
 
@@ -14,14 +19,22 @@ const envFilePath: string = getEnvPath(`${__dirname}/config/env/`);
   imports: [
     ConfigModule.forRoot({
       envFilePath: envFilePath,
-      // load: [envConfiguration],
       validationSchema: envSchema,
       isGlobal: true,
     }),
     AuthModule,
     PrismaModule,
+    WorkOrdersModule,
+    ResourcesModule,
+    InvoicesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard,
+    },
+  ],
 })
 export class AppModule {}

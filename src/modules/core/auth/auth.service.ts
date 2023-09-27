@@ -1,9 +1,10 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../../common/prisma/prisma.service';
 import { AuthDto } from './dto';
 import { Tokens } from './types';
+
 @Injectable()
 export class AuthService {
   constructor(private prisma: PrismaService, private jwtService: JwtService) {}
@@ -45,6 +46,7 @@ export class AuthService {
     if (!isPasswordValid) throw new ForbiddenException('Invalid password');
 
     const token = await this.getTokens(user.id, user.email);
+    await this.updateHashedRt(user.id, token.refreshToken);
     return token;
   }
 
@@ -76,7 +78,7 @@ export class AuthService {
 
     if (!user) throw new ForbiddenException('User not found');
 
-    const rtMatches = await compare(rt, user.hashedRt);
+    const rtMatches = await compare(rt, user.hashedRt || '');
 
     if (!rtMatches) throw new ForbiddenException('Access denied');
 
@@ -103,7 +105,6 @@ export class AuthService {
   }
 
   private async getTokens(userId: number, email: string): Promise<Tokens> {
-    console.log(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN);
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
