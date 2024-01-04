@@ -7,16 +7,20 @@ import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './common/guards';
 import { getEnvPath } from './config/env.helper';
 import { envSchema } from './config/env.validation';
+import { ResourcesModule } from './modules/apps/prodassist/resources/resources.module';
+import { WorkOrdersModule } from './modules/apps/prodassist/work-orders/work-orders.module';
+import { InvoicesModule } from './modules/apps/suppnet/invoices/invoices.module';
 import { PrismaModule } from './modules/common/prisma/prisma.module';
 import { AuthModule } from './modules/core/auth/auth.module';
-import { WorkOrdersModule } from './modules/apps/prodassist/work-orders/work-orders.module';
-import { ResourcesModule } from './modules/apps/prodassist/resources/resources.module';
-import { InvoicesModule } from './modules/apps/suppnet/invoices/invoices.module';
 
-const envFilePath: string = getEnvPath(`${__dirname}/config/env/`);
+const envFilePath: string = getEnvPath(`${__dirname}/../`);
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: ['.env.local', '.env'],
+      isGlobal: true,
+    }),
     ConfigModule.forRoot({
       envFilePath: envFilePath,
       validationSchema: envSchema,

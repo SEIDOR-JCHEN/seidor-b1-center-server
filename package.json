@@ -16,7 +16,7 @@
     "deploy:prod": "pm2 reload SEIDOR-B1CENTER-SERVER-PROD --update-env || pm2 start server.config.js --only SEIDOR-B1CENTER-SERVER-PROD",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "dev": "cross-env NODE_ENV=development nest start --watch",
+    "dev": "cross-env NODE_ENV=test nest start --watch",
     "start": "cross-env NODE_ENV=test nest start",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",

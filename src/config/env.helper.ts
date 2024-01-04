@@ -2,14 +2,35 @@ import { existsSync } from 'fs';
 import { resolve } from 'path';
 
 export function getEnvPath(dest: string): string {
-  const env: string | undefined = process.env.NODE_ENV;
-  const fallback: string = resolve(`${dest}/test.env`);
-  const filename: string = env ? `${env}.env` : 'development.env';
-  let filePath: string = resolve(`${dest}/${filename}`);
+  const shareEnv = '.env';
+  const shareEnvPath = resolve(`${dest}/${shareEnv}`);
+  const shareLocalEnv = '.env.local';
+  const shareLocalEnvPath = resolve(`${dest}/${shareLocalEnv}`);
 
-  if (!existsSync(filePath)) {
-    filePath = fallback;
+  if (existsSync(shareLocalEnvPath)) {
+    console.log(`\nUsing environment file: ${shareLocalEnv}`);
+  } else {
+    if (existsSync(shareEnvPath)) {
+      console.log(`\nUsing environment file: ${shareEnv}`);
+    }
   }
 
-  return filePath;
+  const env: string | undefined = process.env.NODE_ENV;
+  const localEnvFileName = `.env.${env}.local`;
+  const localEnvFilePath = resolve(`${dest}/${localEnvFileName}`);
+  const envFileName = `.env.${env}`;
+  const envFilePath = resolve(`${dest}/${envFileName}`);
+
+  if (!existsSync(localEnvFilePath)) {
+    if (!existsSync(envFilePath)) {
+      throw new Error(
+        `Environment file not found at path: ${localEnvFilePath} or ${envFilePath}`,
+      );
+    }
+    console.log(`Using environment file: ${envFileName}`);
+    return envFilePath;
+  }
+
+  console.log(`Using environment file: ${localEnvFileName}`);
+  return localEnvFilePath;
 }

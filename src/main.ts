@@ -18,13 +18,14 @@ async function bootstrap() {
 
   const PORT = process.env.PORT || 3000;
 
-  console.log(`\n==============================================`);
+  console.log(`==============================================`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
   console.log(`==============================================`);
 
   await app.listen(PORT);
 
   console.log(`Server is running on: https://localhost:${PORT}`);
+  console.log(process.env.TEST);
 }
 
 bootstrap();
